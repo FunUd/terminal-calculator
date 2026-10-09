@@ -1,6 +1,6 @@
 """Package entrypoint."""
 
-from calc.app import main
+from calc.cli import cli_main
 
 if __name__ == "__main__":
-    main()
+    cli_main()

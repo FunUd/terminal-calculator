@@ -68,6 +68,26 @@ Windows 11 向けのキーボード中心の数式入力型 TUI 電卓です。
    uv run python -m calc
    ```
 
+### `tc` で式を直接計算する
+
+式を引数に渡すと、計算結果を標準出力に表示し、デフォルトでは10進数（DEC）の結果をクリップボードにコピーします。
+
+```powershell
+uv run tc "1+2*3"
+```
+
+コピーする基数は `-b` または `--base` で変更できます（`dec` / `hex` / `bin` / `oct`）。標準出力にも指定した基数で結果を表示します。
+
+```powershell
+uv run tc -b hex "0xFF+10"
+```
+
+クリップボードへのコピーを無効にする場合:
+
+```powershell
+uv run tc --no-copy "1+2*3"
+```
+
 ---
 
 ## `uv run` なしで起動するには

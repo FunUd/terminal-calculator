@@ -10,7 +10,7 @@ dependencies = [
 
 [project.scripts]
 calc = "calc.app:main"
-tc = "calc.app:main"
+tc = "calc.cli:cli_main"
 
 [build-system]
 requires = ["hatchling"]
