@@ -58,7 +58,7 @@ class CopyScreen(ModalScreen[Optional[str]]):
 
     def compose(self) -> ComposeResult:
         with Vertical(id="copy-dialog"):
-            yield Static("クリップボードにコピー (数字キー 1-6 または Enter)", id="dialog-title")
+            yield Static("クリップボードにコピー (数字キー 1-8 または Enter)", id="dialog-title")
             opt_list = OptionList(id="copy-options")
 
             if self.result is not None:
@@ -67,8 +67,12 @@ class CopyScreen(ModalScreen[Optional[str]]):
                     ("2", "HEX", self.result.hex),
                     ("3", "BIN", self.result.bin),
                     ("4", "OCT", self.result.oct),
-                    ("5", "Signed 32", str(self.result.signed_32) if self.result.signed_32 is not None else "N/A"),
-                    ("6", "Unsigned 32", str(self.result.unsigned_32) if self.result.unsigned_32 is not None else "N/A"),
+                    ("5", "Signed 16", str(self.result.signed_16) if self.result.signed_16 is not None else "N/A"),
+                    ("6", "Unsigned 16", str(self.result.unsigned_16) if self.result.unsigned_16 is not None else "N/A"),
+                    ("7", "Signed 32", str(self.result.signed_32) if self.result.signed_32 is not None else "N/A"),
+                    ("8", "Unsigned 32", str(self.result.unsigned_32) if self.result.unsigned_32 is not None else "N/A"),
+                    ("9", "Signed 64", str(self.result.signed_64) if self.result.signed_64 is not None else "N/A"),
+                    ("0", "Unsigned 64", str(self.result.unsigned_64) if self.result.unsigned_64 is not None else "N/A"),
                 ]
                 for num, label, val in items:
                     if val != "N/A":

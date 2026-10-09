@@ -129,14 +129,16 @@ class CalculatorApp(App):
     #warning-box {
         color: $warning;
         text-style: bold italic;
-        height: 1;
+        height: auto;
         margin-top: 1;
+        min-height: 1;
     }
 
     #error-box {
         color: $error;
         text-style: bold;
-        height: 1;
+        height: auto;
+        min-height: 1;
     }
 
     #history-container {
@@ -232,11 +234,23 @@ class CalculatorApp(App):
                         yield Static("OCT", classes="result-label")
                         yield Static("-", id="val-oct", classes="result-val")
                     with Horizontal(classes="result-row"):
+                        yield Static("Signed 16", classes="result-label")
+                        yield Static("-", id="val-signed-16", classes="result-val")
+                    with Horizontal(classes="result-row"):
+                        yield Static("Unsigned 16", classes="result-label")
+                        yield Static("-", id="val-unsigned-16", classes="result-val")
+                    with Horizontal(classes="result-row"):
                         yield Static("Signed 32", classes="result-label")
-                        yield Static("-", id="val-signed", classes="result-val")
+                        yield Static("-", id="val-signed-32", classes="result-val")
                     with Horizontal(classes="result-row"):
                         yield Static("Unsigned 32", classes="result-label")
-                        yield Static("-", id="val-unsigned", classes="result-val")
+                        yield Static("-", id="val-unsigned-32", classes="result-val")
+                    with Horizontal(classes="result-row"):
+                        yield Static("Signed 64", classes="result-label")
+                        yield Static("-", id="val-signed-64", classes="result-val")
+                    with Horizontal(classes="result-row"):
+                        yield Static("Unsigned 64", classes="result-label")
+                        yield Static("-", id="val-unsigned-64", classes="result-val")
 
                     yield Static("", id="warning-box")
                     yield Static("", id="error-box")
@@ -413,11 +427,23 @@ class CalculatorApp(App):
         self.query_one("#val-hex", Static).update(res.hex)
         self.query_one("#val-bin", Static).update(res.bin)
         self.query_one("#val-oct", Static).update(res.oct)
-        self.query_one("#val-signed", Static).update(
+        self.query_one("#val-signed-16", Static).update(
+            str(res.signed_16) if res.signed_16 is not None else "N/A"
+        )
+        self.query_one("#val-unsigned-16", Static).update(
+            str(res.unsigned_16) if res.unsigned_16 is not None else "N/A"
+        )
+        self.query_one("#val-signed-32", Static).update(
             str(res.signed_32) if res.signed_32 is not None else "N/A"
         )
-        self.query_one("#val-unsigned", Static).update(
+        self.query_one("#val-unsigned-32", Static).update(
             str(res.unsigned_32) if res.unsigned_32 is not None else "N/A"
+        )
+        self.query_one("#val-signed-64", Static).update(
+            str(res.signed_64) if res.signed_64 is not None else "N/A"
+        )
+        self.query_one("#val-unsigned-64", Static).update(
+            str(res.unsigned_64) if res.unsigned_64 is not None else "N/A"
         )
         self.query_one("#warning-box", Static).update(res.warning)
 
@@ -431,8 +457,12 @@ class CalculatorApp(App):
         self.query_one("#val-hex", Static).update("-")
         self.query_one("#val-bin", Static).update("-")
         self.query_one("#val-oct", Static).update("-")
-        self.query_one("#val-signed", Static).update("-")
-        self.query_one("#val-unsigned", Static).update("-")
+        self.query_one("#val-signed-16", Static).update("-")
+        self.query_one("#val-unsigned-16", Static).update("-")
+        self.query_one("#val-signed-32", Static).update("-")
+        self.query_one("#val-unsigned-32", Static).update("-")
+        self.query_one("#val-signed-64", Static).update("-")
+        self.query_one("#val-unsigned-64", Static).update("-")
         self.query_one("#warning-box", Static).update("")
         self.query_one("#bit-grid-text", Static).update("\n".join(format_bit_grid(None)))
         if not keep_error:

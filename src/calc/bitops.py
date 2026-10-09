@@ -1,10 +1,36 @@
-"""32-bit Bitwise operations and conversions."""
+"""16/32/64-bit Bitwise operations and conversions."""
 
+MASK_16 = 0xFFFF
 MASK_32 = 0xFFFFFFFF
+MASK_64 = 0xFFFFFFFFFFFFFFFF
+
+INT16_MIN = -32768
+INT16_MAX = 32767
+UINT16_MIN = 0
+UINT16_MAX = 65535
+
 INT32_MIN = -2147483648
 INT32_MAX = 2147483647
 UINT32_MIN = 0
 UINT32_MAX = 4294967295
+
+INT64_MIN = -9223372036854775808
+INT64_MAX = 9223372036854775807
+UINT64_MIN = 0
+UINT64_MAX = 18446744073709551615
+
+
+def to_u16(val: int) -> int:
+    """Normalize an integer to an unsigned 16-bit integer (0 ~ 0xFFFF)."""
+    return val & MASK_16
+
+
+def to_i16(val: int) -> int:
+    """Interpret the lower 16 bits of an integer as a two's complement signed 16-bit integer."""
+    u = val & MASK_16
+    if u >= 0x8000:
+        return u - 0x10000
+    return u
 
 
 def to_u32(val: int) -> int:
@@ -17,6 +43,19 @@ def to_i32(val: int) -> int:
     u = val & MASK_32
     if u >= 0x80000000:
         return u - 0x100000000
+    return u
+
+
+def to_u64(val: int) -> int:
+    """Normalize an integer to an unsigned 64-bit integer (0 ~ 0xFFFFFFFFFFFFFFFF)."""
+    return val & MASK_64
+
+
+def to_i64(val: int) -> int:
+    """Interpret the lower 64 bits of an integer as a two's complement signed 64-bit integer."""
+    u = val & MASK_64
+    if u >= 0x8000000000000000:
+        return u - 0x10000000000000000
     return u
 
 
@@ -57,6 +96,16 @@ def bit_rshift(a: int, shift: int) -> int:
     return (to_u32(a) >> shift) & MASK_32
 
 
+def is_signed_16_overflow(val: int) -> bool:
+    """Check if an exact integer overflows signed 16-bit range."""
+    return val < INT16_MIN or val > INT16_MAX
+
+
+def is_unsigned_16_overflow(val: int) -> bool:
+    """Check if an exact integer overflows unsigned 16-bit range."""
+    return val < UINT16_MIN or val > UINT16_MAX
+
+
 def is_signed_32_overflow(val: int) -> bool:
     """Check if an exact integer overflows signed 32-bit range."""
     return val < INT32_MIN or val > INT32_MAX
@@ -65,6 +114,16 @@ def is_signed_32_overflow(val: int) -> bool:
 def is_unsigned_32_overflow(val: int) -> bool:
     """Check if an exact integer overflows unsigned 32-bit range."""
     return val < UINT32_MIN or val > UINT32_MAX
+
+
+def is_signed_64_overflow(val: int) -> bool:
+    """Check if an exact integer overflows signed 64-bit range."""
+    return val < INT64_MIN or val > INT64_MAX
+
+
+def is_unsigned_64_overflow(val: int) -> bool:
+    """Check if an exact integer overflows unsigned 64-bit range."""
+    return val < UINT64_MIN or val > UINT64_MAX
 
 
 MASK_16 = 0xFFFF

@@ -5,10 +5,18 @@ from dataclasses import dataclass
 from typing import Optional, Union
 
 from calc.bitops import (
+    to_i16,
+    to_u16,
     to_i32,
     to_u32,
+    to_i64,
+    to_u64,
+    is_signed_16_overflow,
+    is_unsigned_16_overflow,
     is_signed_32_overflow,
     is_unsigned_32_overflow,
+    is_signed_64_overflow,
+    is_unsigned_64_overflow,
 )
 
 
@@ -19,10 +27,12 @@ class FormatResult:
     hex: str
     bin: str
     oct: str
+    signed_16: Optional[int]
+    unsigned_16: Optional[int]
     signed_32: Optional[int]
     unsigned_32: Optional[int]
-    signed_overflow: bool
-    unsigned_overflow: bool
+    signed_64: Optional[int]
+    unsigned_64: Optional[int]
     warning: str
 
 
@@ -46,18 +56,39 @@ def format_bin_grouped(val: int) -> str:
 
 
 def format_result(val: Union[int, float]) -> FormatResult:
-    """Format a calculation result into multiple base representations and 32-bit interpretations."""
+    """Format a calculation result into multiple base representations and 16/32/64-bit interpretations."""
     if isinstance(val, int):
-        s_overflow = is_signed_32_overflow(val)
-        u_overflow = is_unsigned_32_overflow(val)
+        # 16-bit
+        s16_overflow = is_signed_16_overflow(val)
+        u16_overflow = is_unsigned_16_overflow(val)
+        s16 = to_i16(val)
+        u16 = to_u16(val)
+
+        # 32-bit
+        s32_overflow = is_signed_32_overflow(val)
+        u32_overflow = is_unsigned_32_overflow(val)
         s32 = to_i32(val)
         u32 = to_u32(val)
 
+        # 64-bit
+        s64_overflow = is_signed_64_overflow(val)
+        u64_overflow = is_unsigned_64_overflow(val)
+        s64 = to_i64(val)
+        u64 = to_u64(val)
+
         warnings = []
-        if s_overflow:
+        if s16_overflow:
+            warnings.append("Signed 16-bit overflow")
+        if u16_overflow:
+            warnings.append("Unsigned 16-bit overflow")
+        if s32_overflow:
             warnings.append("Signed 32-bit overflow")
-        if u_overflow:
+        if u32_overflow:
             warnings.append("Unsigned 32-bit overflow")
+        if s64_overflow:
+            warnings.append("Signed 64-bit overflow")
+        if u64_overflow:
+            warnings.append("Unsigned 64-bit overflow")
 
         warning_text = " / ".join(warnings) if warnings else ""
 
@@ -75,25 +106,28 @@ def format_result(val: Union[int, float]) -> FormatResult:
             hex=hex_str,
             bin=format_bin_grouped(val),
             oct=oct_str,
+            signed_16=s16,
+            unsigned_16=u16,
             signed_32=s32,
             unsigned_32=u32,
-            signed_overflow=s_overflow,
-            unsigned_overflow=u_overflow,
+            signed_64=s64,
+            unsigned_64=u64,
             warning=warning_text,
         )
     else:
         # Float result
-        # Check if float is close to integer or format nicely
         return FormatResult(
             is_integer=False,
             dec=f"{val:.10g}" if abs(val) < 1e15 and abs(val) > 1e-10 else str(val),
             hex="N/A",
             bin="N/A",
             oct="N/A",
+            signed_16=None,
+            unsigned_16=None,
             signed_32=None,
             unsigned_32=None,
-            signed_overflow=False,
-            unsigned_overflow=False,
+            signed_64=None,
+            unsigned_64=None,
             warning="",
         )
 

@@ -15,7 +15,12 @@ async def test_app_input_and_results():
         assert str(app.query_one("#val-dec", Static).content) == "265"
         assert str(app.query_one("#val-hex", Static).content) == "0x109"
         assert str(app.query_one("#val-bin", Static).content) == "0b1_0000_1001"
-        assert str(app.query_one("#val-signed", Static).content) == "265"
+        assert str(app.query_one("#val-signed-16", Static).content) == "265"
+        assert str(app.query_one("#val-unsigned-16", Static).content) == "265"
+        assert str(app.query_one("#val-signed-32", Static).content) == "265"
+        assert str(app.query_one("#val-unsigned-32", Static).content) == "265"
+        assert str(app.query_one("#val-signed-64", Static).content) == "265"
+        assert str(app.query_one("#val-unsigned-64", Static).content) == "265"
 
 
 @pytest.mark.asyncio

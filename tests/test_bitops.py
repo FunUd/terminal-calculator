@@ -1,15 +1,23 @@
 import pytest
 from calc.bitops import (
+    to_u16,
+    to_i16,
     to_u32,
     to_i32,
+    to_u64,
+    to_i64,
     bit_and,
     bit_or,
     bit_xor,
     bit_not,
     bit_lshift,
     bit_rshift,
+    is_signed_16_overflow,
+    is_unsigned_16_overflow,
     is_signed_32_overflow,
     is_unsigned_32_overflow,
+    is_signed_64_overflow,
+    is_unsigned_64_overflow,
     bswap16,
     bswap32,
 )
@@ -30,6 +38,39 @@ def test_to_i32():
     assert to_i32(0xFFFFFFFF) == -1
     assert to_i32(0x100000000) == 0
     assert to_i32(-1) == -1
+
+
+def test_to_u16():
+    assert to_u16(0) == 0
+    assert to_u16(0xFFFF) == 0xFFFF
+    assert to_u16(0x10000) == 0
+    assert to_u16(-1) == 0xFFFF
+    assert to_u16(32768) == 32768
+
+
+def test_to_i16():
+    assert to_i16(0) == 0
+    assert to_i16(0x7FFF) == 32767
+    assert to_i16(0x8000) == -32768
+    assert to_i16(0xFFFF) == -1
+    assert to_i16(0x10000) == 0
+    assert to_i16(-1) == -1
+
+
+def test_to_u64():
+    assert to_u64(0) == 0
+    assert to_u64(0xFFFFFFFFFFFFFFFF) == 0xFFFFFFFFFFFFFFFF
+    assert to_u64(0x10000000000000000) == 0
+    assert to_u64(-1) == 0xFFFFFFFFFFFFFFFF
+
+
+def test_to_i64():
+    assert to_i64(0) == 0
+    assert to_i64(0x7FFFFFFFFFFFFFFF) == 9223372036854775807
+    assert to_i64(0x8000000000000000) == -9223372036854775808
+    assert to_i64(0xFFFFFFFFFFFFFFFF) == -1
+    assert to_i64(0x10000000000000000) == 0
+    assert to_i64(-1) == -1
 
 
 def test_bit_and():
@@ -81,6 +122,19 @@ def test_bit_rshift():
 
 
 def test_overflow_checks():
+    # Signed 16-bit: -32768 ~ 32767
+    assert not is_signed_16_overflow(0)
+    assert not is_signed_16_overflow(32767)
+    assert not is_signed_16_overflow(-32768)
+    assert is_signed_16_overflow(32768)
+    assert is_signed_16_overflow(-32769)
+
+    # Unsigned 16-bit: 0 ~ 65535
+    assert not is_unsigned_16_overflow(0)
+    assert not is_unsigned_16_overflow(65535)
+    assert is_unsigned_16_overflow(-1)
+    assert is_unsigned_16_overflow(65536)
+
     # Signed 32-bit: -2147483648 ~ 2147483647
     assert not is_signed_32_overflow(0)
     assert not is_signed_32_overflow(2147483647)
@@ -93,6 +147,19 @@ def test_overflow_checks():
     assert not is_unsigned_32_overflow(4294967295)
     assert is_unsigned_32_overflow(-1)
     assert is_unsigned_32_overflow(4294967296)
+
+    # Signed 64-bit: -9223372036854775808 ~ 9223372036854775807
+    assert not is_signed_64_overflow(0)
+    assert not is_signed_64_overflow(9223372036854775807)
+    assert not is_signed_64_overflow(-9223372036854775808)
+    assert is_signed_64_overflow(9223372036854775808)
+    assert is_signed_64_overflow(-9223372036854775809)
+
+    # Unsigned 64-bit: 0 ~ 18446744073709551615
+    assert not is_unsigned_64_overflow(0)
+    assert not is_unsigned_64_overflow(18446744073709551615)
+    assert is_unsigned_64_overflow(-1)
+    assert is_unsigned_64_overflow(18446744073709551616)
 
 
 # bswap16 のテスト
